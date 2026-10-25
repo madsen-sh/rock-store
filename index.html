@@ -559,7 +559,9 @@ footer{border-top:1px solid var(--line);padding:2.4rem 0 6rem;color:var(--muted)
   .card{aspect-ratio:3/5.3}
 }
 @media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
+  /* فقط حرکت‌های خودکار و همیشگی خاموش می‌شوند؛ انیمیشن‌هایی که با کلیک کاربر اجرا می‌شوند (فلیپ کارت، آیکون‌ها) می‌مانند */
+  .hero-drift,.fab-main::after,.hint-chip i,.rack-hand span{animation:none!important}
+  .reveal{transition-duration:.2s}
   html{scroll-behavior:auto}
 }
 </style>
