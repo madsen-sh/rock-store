@@ -345,7 +345,7 @@ section{scroll-margin-top:90px}
 .card[hidden]{display:none}
 .card-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .8s var(--ease)}
 .card.flipped .card-inner{transform:rotateY(180deg)}
-@media (hover:hover){.card:hover .card-inner{transform:rotateY(180deg)}.card:hover .front{pointer-events:none}.card:hover .back{pointer-events:auto}}
+@media (hover:hover){.card:hover .front img{transform:scale(1.04)}.card:hover .flip-hint{background:rgba(116,31,43,.55)}}
 .back{pointer-events:none}
 .card.flipped .front{pointer-events:none}
 .card.flipped .back{pointer-events:auto}
@@ -1477,6 +1477,20 @@ function Rack(){
     const sync = e=>{ const i = RACK.findIndex(r=>r.key===e.detail); if(i>=0 && i!==mod(Math.round(st.target))){ st.target = nearest(i); kick(i, 60); } };
     stage.addEventListener('pointerdown', down);
     stage.addEventListener('pointermove', move);
+    // روی کامپیوتر: همین که ماوس روی رگال حرکت کند، رگال همان سمت می‌رود (بدون کلیک)
+    let hx = null, hT = 0;
+    const hoverMove = e=>{
+      if(e.pointerType !== 'mouse' || st.drag || st.locked) return;
+      if(hx === null){ hx = e.clientX; return; }
+      const dx = e.clientX - hx; hx = e.clientX;
+      if(!dx) return;
+      killHint();
+      st.target += dx / st.sp * 1.1;                     // هدف هم‌جهت با ماوس جابه‌جا می‌شود
+      wake();
+      clearTimeout(hT); hT = setTimeout(()=>{ st.target = Math.round(st.target); wake(); }, 140);   // بعد از توقف روی نزدیک‌ترین آویز می‌ایستد
+    };
+    stage.addEventListener('pointermove', hoverMove);
+    stage.addEventListener('pointerleave', ()=>{ hx = null; st.target = Math.round(st.target); wake(); });
     stage.addEventListener('pointerup', up);
     stage.addEventListener('pointercancel', up);
     stage.addEventListener('lostpointercapture', lost);
